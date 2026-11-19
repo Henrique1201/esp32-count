@@ -30,11 +30,19 @@ void VoteStore::begin() {
     votes_ = second.votes;
     activeSlot_ = 1;
   }
+  savedSequence_ = votes_.sequence;
 }
 
 VoteState VoteStore::snapshot() {
   portENTER_CRITICAL(&mux_);
   VoteState copy = votes_;
+  portEXIT_CRITICAL(&mux_);
+  return copy;
+}
+
+uint32_t VoteStore::savedSequence() {
+  portENTER_CRITICAL(&mux_);
+  uint32_t copy = savedSequence_;
   portEXIT_CRITICAL(&mux_);
   return copy;
 }
@@ -49,13 +57,18 @@ VoteState VoteStore::record(VoteOption option) {
   return copy;
 }
 
-void VoteStore::save(const VoteState &state) {
+bool VoteStore::save(const VoteState &state) {
   SavedVoteState saved{state, checksum(state)};
   uint8_t next = activeSlot_ ^ 1;
   const char *key = next ? "slot1" : "slot0";
   if (storage_.putBytes(key, &saved, sizeof(saved)) == sizeof(saved)) {
     activeSlot_ = next;
+    portENTER_CRITICAL(&mux_);
+    savedSequence_ = state.sequence;
+    portEXIT_CRITICAL(&mux_);
+    return true;
   } else {
     Serial.println("Erro ao salvar votos na NVS");
+    return false;
   }
 }
