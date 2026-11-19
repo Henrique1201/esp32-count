@@ -17,8 +17,9 @@ class VoteStore {
  public:
   void begin();
   VoteState record(VoteOption option);
-  void save(const VoteState &state);
+  bool save(const VoteState &state);
   VoteState snapshot();
+  uint32_t savedSequence();
 
  private:
   struct SavedVoteState {
@@ -32,6 +33,7 @@ class VoteStore {
 
   Preferences storage_;
   VoteState votes_;
+  uint32_t savedSequence_ = 0;
   uint8_t activeSlot_ = 0;
   portMUX_TYPE mux_ = portMUX_INITIALIZER_UNLOCKED;
 };
