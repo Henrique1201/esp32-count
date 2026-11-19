@@ -18,6 +18,20 @@
 #define ECOVOTE_AP_PASSWORD "ecovote123"
 #endif
 
+// Cloud API used by the companion ecovote-web repository.
+#ifndef ECOVOTE_BACKEND_BASE_URL
+#define ECOVOTE_BACKEND_BASE_URL "https://ecovote-web.vercel.app/api/hardware"
+#endif
+#ifndef ECOVOTE_DEVICE_API_KEY
+#define ECOVOTE_DEVICE_API_KEY ""
+#endif
+#ifndef ECOVOTE_BACKEND_CA_CERT
+#define ECOVOTE_BACKEND_CA_CERT ""
+#endif
+#ifndef ECOVOTE_ALLOW_INSECURE_TLS
+#define ECOVOTE_ALLOW_INSECURE_TLS 0
+#endif
+
 // GPIO assignments for the ESP32 DevKit and four chained MAX7219 modules.
 #define ECOVOTE_SENSOR_A_PIN 26
 #define ECOVOTE_SENSOR_B_PIN 27
