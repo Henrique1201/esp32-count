@@ -42,7 +42,8 @@ void StatusServer::sendStatus() {
 
 void StatusServer::run() {
   WiFi.mode(WIFI_AP_STA);
-  deviceId_ = WiFi.macAddress();
+  String macAddress = WiFi.macAddress();
+  deviceId_ = macAddress;
   deviceId_.replace(":", "");
   String apName = "EcoVote-" + deviceId_.substring(deviceId_.length() - 6);
   if (!WiFi.softAP(apName.c_str(), ECOVOTE_AP_PASSWORD)) {
@@ -60,8 +61,8 @@ void StatusServer::run() {
     server_.send(404, "application/json", "{\"error\":\"not_found\"}");
   });
   server_.begin();
-  Serial.printf("AP: %s, API: http://%s/api/v1/status\n", apName.c_str(),
-                WiFi.softAPIP().toString().c_str());
+  Serial.printf("MAC: %s | AP: %s | API: http://%s/api/v1/status\n",
+                macAddress.c_str(), apName.c_str(), WiFi.softAPIP().toString().c_str());
 
   uint32_t lastRetry = millis();
   while (true) {
